@@ -17,12 +17,7 @@ class Database:
 
     @staticmethod
     def create_indexes():
-        """
-        Creates necessary indexes for the application:
-        1. Users: Unique email index.
-        2. Rides: GeoSpatial index on 'pickupCoords' for $near queries.
-        3. Rides: Compound index on 'pickup' and 'dropoff' for text-based route search.
-        """
+     
         if Database.db is None:
             return
 

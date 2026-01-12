@@ -239,7 +239,7 @@ if (createForm) {
         };
 
         try {
-            const res = await authFetch('/api/ride/create', {
+            const res = await authFetch('/api/v1/ride/create', {
                 method: 'POST',
                 body: JSON.stringify(payload)
             });

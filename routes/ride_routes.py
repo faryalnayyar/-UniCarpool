@@ -14,9 +14,7 @@ def create_ride(current_user):
     db = Database.get_db()
     
     try:
-        # Expecting lat/lng for pickup and dropoff
-        # In a real app, you'd geocode the address string to coords on the frontend or backend
-        # Here we assume frontend sends specific coords
+      
         pickup_lng = float(data['pickupCoords']['lng'])
         pickup_lat = float(data['pickupCoords']['lat'])
         dropoff_lng = float(data['dropoffCoords']['lng'])
@@ -44,7 +42,7 @@ def create_ride(current_user):
         return jsonify({"message": "Invalid coordinates format"}), 400
 
 
-@ride_bp.route('/v1/rides/nearby', methods=['GET'])
+@ride_bp.route('/rides/nearby', methods=['GET'])
 def get_nearby_rides():
     """
     ADVANCED DB FEATURE: GeoSpatial Aggregation ($geoNear).
@@ -58,8 +56,7 @@ def get_nearby_rides():
         lng = float(request.args.get('lng'))
         max_dist = float(request.args.get('dist', 5000)) # default 5km
         
-        # Aggregation Pipeline with $geoNear
-        # IMPORTANT: $geoNear must be the first stage.
+       
         pipeline = [
             {
                 "$geoNear": {
@@ -105,7 +102,7 @@ def get_nearby_rides():
     except (ValueError, TypeError) as e:
         return jsonify({"message": f"Invalid parameters: {str(e)}"}), 400
 
-@ride_bp.route('/v1/ride/request/<ride_id>', methods=['POST'])
+@ride_bp.route('/ride/request/<ride_id>', methods=['POST'])
 @token_required
 def join_ride(current_user, ride_id):
     """
@@ -157,7 +154,7 @@ def join_ride(current_user, ride_id):
 # NEW API ENDPOINTS (v1) - Advanced Features
 # ==========================================
 
-@ride_bp.route('/v1/rides/search', methods=['GET'])
+@ride_bp.route('/rides/search', methods=['GET'])
 @token_required
 def search_rides_v1(current_user):
     """
@@ -191,7 +188,7 @@ def search_rides_v1(current_user):
     except Exception as e:
         return jsonify({"message": "Error searching rides", "error": str(e)}), 500
 
-@ride_bp.route('/v1/my/joined-rides', methods=['GET'])
+@ride_bp.route('/my/joined-rides', methods=['GET'])
 @token_required
 def my_joined_rides(current_user):
     """
@@ -215,7 +212,7 @@ def my_joined_rides(current_user):
     except Exception as e:
         return jsonify({"message": "Error fetching joined rides", "error": str(e)}), 500
 
-@ride_bp.route('/v1/ride/cancel/<ride_id>', methods=['POST'])
+@ride_bp.route('/ride/cancel/<ride_id>', methods=['POST'])
 @token_required
 def cancel_ride_request(current_user, ride_id):
     """
@@ -252,7 +249,7 @@ def cancel_ride_request(current_user, ride_id):
     except Exception as e:
         return jsonify({"message": "Error cancelling ride", "error": str(e)}), 500
 
-@ride_bp.route('/v1/driver/stats', methods=['GET'])
+@ride_bp.route('/driver/stats', methods=['GET'])
 @token_required
 def driver_stats_v1(current_user):
     """
@@ -302,7 +299,7 @@ def driver_stats_v1(current_user):
     except Exception as e:
         return jsonify({"message": "Error calculating stats", "error": str(e)}), 500
 
-@ride_bp.route('/v1/ride/<ride_id>/availability', methods=['GET'])
+@ride_bp.route('/ride/<ride_id>/availability', methods=['GET'])
 @token_required
 def ride_availability(current_user, ride_id):
     """
@@ -335,7 +332,7 @@ def ride_availability(current_user, ride_id):
     except Exception as e:
         return jsonify({"message": "Error checking availability", "error": str(e)}), 500
 
-@ride_bp.route('/v1/analytics/popular-routes', methods=['GET'])
+@ride_bp.route('/analytics/popular-routes', methods=['GET'])
 @token_required
 def popular_routes(current_user):
     """
