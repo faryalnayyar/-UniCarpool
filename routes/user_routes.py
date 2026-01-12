@@ -14,6 +14,9 @@ def register():
     data = request.get_json()
     db = Database.get_db()
     
+    if db is None:
+        return jsonify({"message": "Database connection failed. Check MONGO_URI and IP whitelist."}), 500
+    
     # Check if user exists
     if db.users.find_one({"email": data['email']}):
         return jsonify({"message": "User already exists"}), 400
@@ -36,6 +39,9 @@ def register():
 def login():
     data = request.get_json()
     db = Database.get_db()
+    
+    if db is None:
+        return jsonify({"message": "Database connection failed. Check MONGO_URI and IP whitelist."}), 500
     
     user = db.users.find_one({"email": data['email']})
     

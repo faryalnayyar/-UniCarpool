@@ -21,6 +21,8 @@ def token_required(f):
         try:
             data = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=["HS256"])
             db = Database.get_db()
+            if db is None:
+                return jsonify({"message": "Server database connection lost"}), 500
             current_user = db.users.find_one({"_id": ObjectId(data['user_id'])})
             if not current_user:
                 raise Exception("User not found")

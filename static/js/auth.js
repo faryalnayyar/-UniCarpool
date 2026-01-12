@@ -26,7 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     errorP.innerText = data.message;
                 }
             } catch (err) {
-                errorP.innerText = "Connection error";
+                console.error("Login Fetch Error:", err);
+                errorP.innerText = "Connection error: Check Vercel Logs/Environment Variables";
             }
         });
     }

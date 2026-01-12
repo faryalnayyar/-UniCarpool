@@ -51,6 +51,8 @@ def get_nearby_rides():
     - "Smart Match Score": Closer + More Seats = Higher Score.
     """
     db = Database.get_db()
+    if db is None:
+        return jsonify({"message": "Database connection failed"}), 500
     try:
         lat = float(request.args.get('lat'))
         lng = float(request.args.get('lng'))
@@ -110,6 +112,8 @@ def join_ride(current_user, ride_id):
     Uses atomic update with $expr to ensure concurrency safety.
     """
     db = Database.get_db()
+    if db is None:
+        return jsonify({"message": "Database connection failed"}), 500
     user_id = str(current_user['_id'])
     
     # Check if ride exists (for 404)
@@ -164,6 +168,8 @@ def search_rides_v1(current_user):
     - Returns JSON list of matches.
     """
     db = Database.get_db()
+    if db is None:
+        return jsonify({"message": "Database connection failed"}), 500
     pickup_query = request.args.get('from')
     dropoff_query = request.args.get('to')
 
@@ -198,6 +204,8 @@ def my_joined_rides(current_user):
     - Demonstrates array querying in MongoDB.
     """
     db = Database.get_db()
+    if db is None:
+        return jsonify({"message": "Database connection failed"}), 500
     user_id = str(current_user['_id'])
 
     try:
@@ -222,6 +230,8 @@ def cancel_ride_request(current_user, ride_id):
     - Ensures atomicity.
     """
     db = Database.get_db()
+    if db is None:
+        return jsonify({"message": "Database connection failed"}), 500
     user_id = str(current_user['_id'])
 
     try:
@@ -259,6 +269,8 @@ def driver_stats_v1(current_user):
     - Uses MongoDB Aggregation Pipeline: $match, $project (size), $group.
     """
     db = Database.get_db()
+    if db is None:
+        return jsonify({"message": "Database connection failed"}), 500
     driver_id = str(current_user['_id'])
 
     pipeline = [
@@ -309,6 +321,8 @@ def ride_availability(current_user, ride_id):
     - Logic: seats - length(passengers).
     """
     db = Database.get_db()
+    if db is None:
+        return jsonify({"message": "Database connection failed"}), 500
 
     try:
         ride = db.rides.find_one({"_id": ObjectId(ride_id)})
@@ -342,6 +356,8 @@ def popular_routes(current_user):
     - Returns top 5 frequent routes.
     """
     db = Database.get_db()
+    if db is None:
+        return jsonify({"message": "Database connection failed"}), 500
     
     pipeline = [
         {
