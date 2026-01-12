@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniCarpool | Student Rideshare</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo">UniCarpool</div>
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/auth" id="loginBtn">Login/Register</a>
+            <a href="#" id="logoutBtn" style="display:none;" onclick="logout()">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        {% block content %}
+        <header class="hero">
+            <div class="hero-content">
+                <h1>Ride Together, Save Together.</h1>
+                <p>The exclusive carpooling community for university students.</p>
+                <a href="/auth" class="cta-button">Get Started</a>
+            </div>
+            <div class="hero-image">
+                <img src="/static/img/landing_hero.png" alt="University Carpooling Illustration">
+            </div>
+        </header>
+        {% endblock %}
+    </div>
+
+    <script>
+        const token = localStorage.getItem('token');
+        if (token) {
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('logoutBtn').style.display = 'inline-block';
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/auth';
+        }
+    </script>
+</body>
+
+</html>
