@@ -45,4 +45,16 @@ def create_app():
     def serve_sw():
         return app.send_static_file('sw.js')
 
+    # -------------------------
+    # Quick Seed for Demo
+    # -------------------------
+    @app.route('/api/v1/seed')
+    def quick_seed():
+        from seed_data import seed_logic
+        try:
+            seed_logic()
+            return "🌱 Cloud Database Seeded Successfully! Go to /auth to login."
+        except Exception as e:
+            return f"❌ Seeding Failed: {str(e)}"
+
     return app

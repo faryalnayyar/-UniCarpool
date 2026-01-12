@@ -11,20 +11,17 @@ import time
 CENTER_LAT = 40.75
 CENTER_LNG = -73.98
 
-def seed():
+def seed_logic():
     print("🌱 Seeding Demo Data...")
+    db = Database.get_db()
+    if db is None:
+        raise Exception("Database connection failed")
     
-    # Initialize DB connection manually to avoid app context issues if not needed
-    client = MongoClient(Config.MONGO_URI)
-    db = client.get_database()
-    
-    # 1. Clear existing data (Optional: comment out if you want to keep)
-    print("   - Clearing existing users and rides...")
+    # 1. Clear existing data
     db.users.delete_many({})
     db.rides.delete_many({})
     
     # 2. Create Users
-    print("   - Creating Users...")
     users_data = [
         {"name": "Demo Driver", "email": "driver@test.com", "gender": "Male"},
         {"name": "Alice Passenger", "email": "alice@test.com", "gender": "Female"},
@@ -50,12 +47,7 @@ def seed():
     bob = created_users[2]
     sarah = created_users[3]
     
-    print(f"     -> Created {len(created_users)} users. Password for all: 'password'")
-    
     # 3. Create Rides
-    print("   - Creating Rides...")
-    
-    # Helper to clean coords
     def get_coords(lat_offset, lng_offset):
         return {
             "type": "Point",
@@ -63,40 +55,36 @@ def seed():
         }
         
     rides_data = [
-        # Ride 1: Nearby, High Match (Close + Seats)
         {
             "driverId": str(driver['_id']),
             "pickup": "University Library",
             "dropoff": "Grand Central Station",
-            "pickupCoords": get_coords(0.002, 0.002), # Very close
+            "pickupCoords": get_coords(0.002, 0.002),
             "dropoffCoords": get_coords(0.05, 0.05),
             "time": (datetime.now() + timedelta(hours=2)).isoformat(),
             "seats": 4,
-            "passengers": [str(alice['_id'])] # 1 seat taken
+            "passengers": [str(alice['_id'])]
         },
-        # Ride 2: Nearby, Low Match (Full)
         {
             "driverId": str(sarah['_id']),
             "pickup": "Campus Gate 1",
             "dropoff": "Downtown Mall",
-            "pickupCoords": get_coords(-0.002, -0.002), # Close
+            "pickupCoords": get_coords(-0.002, -0.002),
             "dropoffCoords": get_coords(-0.06, -0.06),
             "time": (datetime.now() + timedelta(hours=1)).isoformat(),
             "seats": 3,
-            "passengers": [str(driver['_id']), str(bob['_id']), str(alice['_id'])] # Full
+            "passengers": [str(driver['_id']), str(bob['_id']), str(alice['_id'])]
         },
-        # Ride 3: Far away
         {
             "driverId": str(bob['_id']),
             "pickup": "North Campus Housing",
             "dropoff": "Airport",
-            "pickupCoords": get_coords(0.1, 0.1), # ~10km away
+            "pickupCoords": get_coords(0.1, 0.1),
             "dropoffCoords": get_coords(0.2, 0.2),
             "time": (datetime.now() + timedelta(days=1)).isoformat(),
             "seats": 2,
             "passengers": []
         },
-        # Ride 4: Popular Route Logic (Same route as Ride 1)
         {
             "driverId": str(sarah['_id']),
             "pickup": "University Library",
@@ -107,7 +95,6 @@ def seed():
             "seats": 3,
             "passengers": []
         },
-         # Ride 5: Another Popular Route
         {
             "driverId": str(driver['_id']),
             "pickup": "Science Block",
@@ -121,6 +108,12 @@ def seed():
     ]
     
     db.rides.insert_many(rides_data)
+
+def seed():
+    client = MongoClient(Config.MONGO_URI)
+    Database.db = client.get_database()
+    seed_logic()
+    print("\n✅ SEEDING COMPLETE!")
     print(f"     -> Created {len(rides_data)} rides.")
 
     print("\n✅ SEEDING COMPLETE!")
